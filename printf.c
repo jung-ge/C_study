@@ -7,7 +7,7 @@ int main()
     int c = 3;
     int i;
 
-    for(int i = 1; i<100;i++)
+    for(int i = 1; i<10;i++) // 구구단
     {
         for(int j = 1; j < 10; j++)
         {
