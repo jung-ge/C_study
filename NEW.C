@@ -2,6 +2,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 // 플레이어 행동 
 bool block = false;
 bool swing = false;
@@ -33,7 +41,7 @@ bool painting = false;
 
 void Ememy()
 {
-  printf("=================\n적 : 기사\n=================\n");
+  printf("=================\n적 : 기사\n적 스테미나 : %d\n플레이어 스테미나 : %d\n\n=================\n",ememy_stamina, stamina);
 }
 
 void Ememy_action()
@@ -52,22 +60,30 @@ void Ememy_action()
     if (r == 1)
     {
       ememy_swing = true;
+      ememy_is_attack = true;
       action_name = "휘두르기";
+      is_first = true;
     } 
     else if (r == 2)
     {
       ememy_slash = true;
+      ememy_is_attack = true;
       action_name = "내려 휘두르기";
+      is_first = true;
     }
     else if (r == 3)
     {
       ememy_Thrust = true;
+      ememy_is_attack = true;
       action_name = "찌르기";
+      is_first = true;
     }
     else if (r == 4)
     {
       ememy_block = true;
+      ememy_is_attack = true;
       action_name = "막기";
+      is_first = true;
     }
   }
   printf("=================\n적 : 기사\n행동 : %s\n=================\n", action_name);
@@ -78,7 +94,7 @@ void Ememy_counter()
   int counter_r = (rand() % 2) + 1;
 
   const char* ememy_counter_name;
-  
+
   if (counter_r == 1)
   {
     if (swing == true)
@@ -106,8 +122,19 @@ void clear()
   bool swing = false;
   bool slash = false;
   bool Thrust = false;
+  bool is_attack = false;
+  bool counter_swing = false;
+  bool counter_slash = false;
+  bool counter_Thrust = false;
 
-  bool painting = false; 
+  bool ememy_is_attack = false;
+  bool ememy_block = false;
+  bool ememy_swing = false;
+  bool ememy_slash = false;
+  bool ememy_Thrust = false;
+  bool ememy_counter_swing = false;
+  bool ememy_counter_slash = false;
+  bool ememy_counter_Thrust = false;
 }
 
 void Action()
@@ -209,8 +236,38 @@ void Final()
   {
     if (ememy_block == true)
     {
-      int random_stamina = (rand() % 30) + 1;
-      ememy_stamina -= random_stamina;
+      if (ememy_counter_swing == true)
+      {
+        if (swing == true)
+        {
+          printf("=================\n적 : 기사\n행동 : 반격 성공\n=================\n");
+          int random_stamina = (rand() % 10) + 1;
+          if (ememy_stamina <= 100)
+          {
+            ememy_stamina += random_stamina;
+          }
+         
+        }
+        else if (slash == true)
+        {
+          printf("=================\n적 : 기사\n행동 : 반격 실패\n=================\n");
+          int random_stamina = (rand() % 40) + 1;
+          if (ememy_stamina <= 100)
+            {
+              ememy_stamina -= random_stamina;
+            }
+        }
+        else if (Thrust == true)
+          {
+            printf("=================\n적 : 기사\n행동 : 반격 실패\n=================\n");
+            int random_stamina = (rand() % 40) + 1;
+            if (ememy_stamina <= 100)
+              {
+                ememy_stamina -= random_stamina;
+              }
+          }
+      }
+      
     }
   }
   if (ememy_is_attack == true)
@@ -257,7 +314,7 @@ int main()
         {
           Ememy_counter();
         }
-        else if (block == true)
+        if (block == true)
         {
           counter();
         }
@@ -265,8 +322,10 @@ int main()
         {
           Painting();
         }
-        
+        Final();
+        clear();
+        clearScreen();
       }
-    
+
   }	
 }
