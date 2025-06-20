@@ -11,8 +11,13 @@ bool is_attack = false;
 bool counter_swing = false;
 bool counter_slash = false;
 bool counter_Thrust = false;
+// 플레이어 스태미나
+int stamina = 100;
+int max_stamina = 100;
+
 // 적 행동 
 bool is_first = true;
+bool ememy_is_attack = false;
 bool ememy_block = false;
 bool ememy_swing = false;
 bool ememy_slash = false;
@@ -20,7 +25,9 @@ bool ememy_Thrust = false;
 bool ememy_counter_swing = false;
 bool ememy_counter_slash = false;
 bool ememy_counter_Thrust = false;
-
+// 적 스태미나
+int ememy_stamina = 100;
+int ememy_max_stamina = 100;
 
 bool painting = false; 
 
@@ -38,6 +45,7 @@ void Ememy_action()
   {
     ememy_block = true;
     action_name = "막기";
+    is_first = false;
   }
   else
   {
@@ -134,6 +142,33 @@ void Action()
   } 
 }
 
+void counter()
+{
+  int counter_temp;
+  printf("=================\n반격\n1.휘두르기 반격\n2.내려휘두리기 반격\n3.찌르기 반격\n4.반격하지 않기\n=================\n");
+  scanf("%d",&counter_temp);
+
+  if (counter_temp == 1)
+  {
+    printf("=================\n휘두르기 반격 선택\n=================\n");
+    counter_swing = true;
+  }
+  else if (counter_temp == 2)
+  {
+    printf("=================\n내려휘두르기 반격 선택\n=================\n");
+    counter_slash = true;
+  }
+  else if (counter_temp == 3)
+  {
+    printf("=================\n내려휘두르기 반격 선택\n=================\n");
+    counter_Thrust = true;
+  }
+  else
+  {
+    printf("=================\n반격하지 않음\n=================\n");
+  }
+}
+
 void Painting()
 {
   int temp_painting = 0;
@@ -172,7 +207,19 @@ void Final()
 {
   if (is_attack == true)
   {
-    
+    if (ememy_block == true)
+    {
+      int random_stamina = (rand() % 30) + 1;
+      ememy_stamina -= random_stamina;
+    }
+  }
+  if (ememy_is_attack == true)
+  {
+    if (block == true)
+    {
+      int random_stamina = (rand() % 30) + 1;
+      stamina -= random_stamina;
+    }
   }
 }
 
@@ -212,9 +259,13 @@ int main()
         }
         else if (block == true)
         {
-          1+ 1 =2;
+          counter();
         }
-        Painting();
+        if (is_attack == true)
+        {
+          Painting();
+        }
+        
       }
     
   }	
