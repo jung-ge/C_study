@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 #define PI 3.14159265
 
@@ -12,31 +18,31 @@ typedef struct {
     float x, y;
 } Vec2;
 
-Vec3 rotateX(Vec3 p, float theta) { // rotation maxtrix 3D
-    return (Vec3){
+Vec3 rotateX(Vec3 p, float theta) {
+    return (Vec3) {
         .x = p.x,
-        .y = p.y * cos(theta) - p.z * sin(theta),
-        .z = p.y * sin(theta) + p.z * cos(theta)
+            .y = p.y * cos(theta) - p.z * sin(theta),
+            .z = p.y * sin(theta) + p.z * cos(theta)
     };
 }
 
 Vec3 rotateY(Vec3 p, float theta) {
-    return (Vec3){
+    return (Vec3) {
         .x = p.x * cos(theta) + p.z * sin(theta),
-        .y = p.y,
-        .z = -p.x * sin(theta) + p.z * cos(theta)
+            .y = p.y,
+            .z = -p.x * sin(theta) + p.z * cos(theta)
     };
 }
 
 Vec3 rotateZ(Vec3 p, float theta) {
-    return (Vec3){
+    return (Vec3) {
         .x = p.x * cos(theta) - p.y * sin(theta),
-        .y = p.x * sin(theta) + p.y * cos(theta),
-        .z = p.z
+            .y = p.x * sin(theta) + p.y * cos(theta),
+            .z = p.z
     };
 }
 
-Vec2 project(Vec3 p) { // 3차원 좌표를 2차원으로 투영하줌 정사영 방법으로 
+Vec2 project(Vec3 p) {
     Vec2 r;
     float scale = 10.0f;
     r.x = p.x * scale + 40;
@@ -75,18 +81,34 @@ void renderCanvas(char canvas[25][80]) {
     }
 }
 
+void waitSeconds(float seconds) {
+#ifdef _WIN32
+    Sleep((int)(seconds * 1000));
+#else
+    usleep((int)(seconds * 1000000));
+#endif
+}
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 int main() {
-    Vec3 cube[8] = { // 꼭짓점 좌표 
+    Vec3 cube[8] = {
         {-1, -1, -1}, {1, -1, -1},
         {1,  1, -1}, {-1, 1, -1},
         {-1, -1,  1}, {1, -1, 1},
         {1,  1,  1}, {-1, 1, 1}
     };
 
-    int edges[12][2] = { // 모서리 어떤 어떤선을 이여야 하는지 
-        {0,1}, {1,2}, {2,3}, {3,0},  // back face
-        {4,5}, {5,6}, {6,7}, {7,4},  // front face
-        {0,4}, {1,5}, {2,6}, {3,7}   // sides
+    int edges[12][2] = {
+        {0,1}, {1,2}, {2,3}, {3,0},
+        {4,5}, {5,6}, {6,7}, {7,4},
+        {0,4}, {1,5}, {2,6}, {3,7}
     };
 
     float angle = 0;
@@ -108,16 +130,16 @@ int main() {
             int a = edges[i][0];
             int b = edges[i][1];
             drawLine(canvas,
-                     (int)projected[a].x, (int)projected[a].y,
-                     (int)projected[b].x, (int)projected[b].y);
+                (int)projected[a].x, (int)projected[a].y,
+                (int)projected[b].x, (int)projected[b].y);
         }
 
-        system("cls");
-	        renderCanvas(canvas);
-	
-	        angle += 0.05f;
-	        Sleep(0.1);
-	    }
-	
-	    return 0;
-	}
+        clearScreen();
+        renderCanvas(canvas);
+
+        angle += 0.05;
+        waitSeconds(0.05);
+    }
+
+    return 0;
+}
